@@ -21,13 +21,13 @@
   --violet-pale: #d4a8ff;
   --lime: #b5f014;
   --rose: #ff3860;
+  --mpesa: #00b345;
+  --mpesa-light: #7affc4;
   --text-body: #e8e0f0;
   --text-dim: #9a90b0;
   --text-bright: #ffffff;
   --glass-border: rgba(255,255,255,0.08);
   --focus-ring: 0 0 0 3px rgba(240,165,0,.55), 0 0 14px rgba(240,165,0,.7);
-  --bmc: #fe0039;
-  --bmc-hover: #e6002e;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -89,9 +89,10 @@ body {
   font-family: 'Cinzel', serif; font-size: 1.15rem; letter-spacing: .14em;
   color: var(--text-body); margin-bottom: 8px;
 }
+
 /* ===== BUTTONS ===== */
 .actions-bar {
-  display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; margin-top: 28px;
+  display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; margin-top: 24px;
 }
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 10px;
@@ -119,7 +120,6 @@ body {
   color: var(--text-bright); border-color: var(--crystal);
   box-shadow: 0 0 32px rgba(122,240,224,.5); transform: translateY(-2px);
 }
-
 .btn-pdf {
   background: linear-gradient(135deg, rgba(240,165,0,.18), rgba(240,165,0,.08));
   color: var(--gold-pale); border-color: rgba(240,165,0,.45);
@@ -129,7 +129,6 @@ body {
   color: var(--text-bright); border-color: var(--gold);
   box-shadow: 0 0 32px rgba(240,165,0,.42); transform: translateY(-2px);
 }
-
 .btn-epub {
   background: linear-gradient(135deg, rgba(154,93,225,.18), rgba(154,93,229,.08));
   color: var(--violet-pale); border-color: rgba(154,93,229,.45);
@@ -139,7 +138,6 @@ body {
   color: var(--text-bright); border-color: var(--violet);
   box-shadow: 0 0 32px rgba(154,93,229,.42); transform: translateY(-2px);
 }
-
 .btn-synopsis {
   background: linear-gradient(135deg, rgba(255,56,96,.16), rgba(255,56,96,.06));
   color: var(--rose); border-color: rgba(255,56,96,.4);
@@ -150,32 +148,35 @@ body {
   box-shadow: 0 0 28px rgba(255,56,96,.38); transform: translateY(-2px);
 }
 
-/* ===== BUY ME COFFEE ===== */
-.coffee-bar {
-  display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 34px;
+/* ===== M-PESA SUPPORT BAR ===== */
+.support-label {
+  font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: .32em;
+  text-transform: uppercase; color: var(--mpesa-light); margin-top: 32px; opacity: .85;
 }
-.bmc-btn {
+.support-bar {
+  display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; margin-top: 16px;
+}
+.mpesa-btn {
   display: inline-flex; align-items: center; justify-content: center;
-  text-decoration: none;
-  font-family: 'Space Mono', monospace; font-size: .78rem; letter-spacing: .22em;
+  font-family: 'Space Mono', monospace; font-size: .82rem; letter-spacing: .22em;
   font-weight: 700; text-transform: uppercase;
-  padding: 12px 24px; border-radius: 6px;
-  border: 1px solid var(--bmc);
-  background: var(--bmc); color: var(--text-bright);
-  box-shadow: 0 0 22px rgba(254,0,57,.28);
-  transition: all .22s ease; position: relative; overflow: hidden;
+  padding: 13px 30px; border-radius: 6px; border: 1px solid var(--mpesa);
+  background: linear-gradient(135deg, rgba(0,179,69,.18), rgba(0,179,69,.08));
+  color: var(--mpesa-light);
+  box-shadow: 0 0 22px rgba(0,179,69,.26);
+  cursor: pointer; transition: all .22s ease;
+  position: relative; overflow: hidden; backdrop-filter: blur(8px);
 }
-.bmc-btn::before { content: '☕'; position: absolute; left: 12px; font-size: 1.1rem; }
-.bmc-btn:hover {
-  background: var(--bmc-hover); border-color: var(--bmc-hover);
-  box-shadow: 0 0 28px rgba(254,0,57,.42); transform: translateY(-2px);
+.mpesa-btn:hover {
+  color: var(--text-bright); border-color: var(--mpesa);
+  box-shadow: 0 0 28px rgba(0,179,69,.42); transform: translateY(-2px);
 }
-.bmc-btn:focus-visible { outline: var(--focus-ring); outline-offset: 2px; }
+.mpesa-btn:focus-visible { outline: var(--focus-ring); outline-offset: 2px; }
 
-/* ===== MODAL ===== */
+/* ===== MODALS ===== */
 .modal-backdrop {
   position: fixed; inset: 0;
-  background: rgba(0,0,0,.7); backdrop-filter: blur(4px);
+  background: rgba(0,0,0,.75); backdrop-filter: blur(5px);
   display: flex; align-items: center; justify-content: center;
   opacity: 0; visibility: hidden;
   transition: opacity .28s ease, visibility .28s ease;
@@ -187,9 +188,9 @@ body {
   background: linear-gradient(160deg, rgba(154,93,229,.08) 0%, rgba(5,3,10,.94) 60%);
   border: 1px solid var(--glass-border);
   border-radius: 10px;
-  max-width: 600px; width: 100%;
-  padding: 40px;
-  box-shadow: 0 0 54px rgba(240,165,0,.24);
+  max-width: 560px; width: 100%;
+  padding: 42px 36px;
+  box-shadow: 0 0 54px rgba(240,165,0,.22);
 }
 .modal::before {
   content: ''; position: absolute; inset: 0;
@@ -209,14 +210,51 @@ body {
 }
 .modal p {
   font-family: 'Crimson Pro', serif; font-style: italic; font-size: 1.02rem;
-  color: var(--text-dim); line-height: 1.8; text-align: center;
-  max-width: 520px; margin: 0 auto;
+  color: var(--text-dim); line-height: 1.7; text-align: center;
+  max-width: 480px; margin: 0 auto;
 }
-.modal .bmc-grid { margin-top: 30px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.modal .highlight { color: var(--mpesa-light); font-weight: 700; }
+
+/* M-Pesa form */
+.mpesa-form { display: flex; flex-direction: column; gap: 18px; margin-top: 22px; }
+.mpesa-form label {
+  font-family: 'Space Mono', monospace; font-size: .72rem; letter-spacing: .2em;
+  text-transform: uppercase; color: var(--text-dim);
+}
+.mpesa-form input[type="tel"] {
+  font-family: 'Space Mono', monospace; font-size: 1.05rem;
+  padding: 13px 16px; border-radius: 6px;
+  border: 1px solid var(--glass-border);
+  background: rgba(0,0,0,.32); color: var(--text-bright);
+  outline: none; transition: border-color .2s, box-shadow .2s;
+}
+.mpesa-form input:focus { border-color: var(--mpesa); box-shadow: 0 0 14px rgba(0,179,69,.3); }
+.mpesa-send {
+  margin-top: 4px;
+  font-family: 'Space Mono', monospace; font-size: .8rem; letter-spacing: .22em;
+  text-transform: uppercase; font-weight: 700;
+  padding: 13px 26px; border-radius: 6px; border: 1px solid var(--mpesa);
+  background: var(--mpesa); color: var(--text-bright);
+  box-shadow: 0 0 18px rgba(0,179,69,.3); cursor: pointer;
+  transition: all .2s ease; position: relative; overflow: hidden;
+}
+.mpesa-send:hover {
+  background: var(--mpesa-light); color: #0a3d1f;
+  box-shadow: 0 0 24px rgba(0,179,69,.45); transform: translateY(-2px);
+}
+.mpesa-send:disabled { opacity: .5; cursor: wait; pointer-events: none; }
+.mpesa-send:focus-visible { outline: var(--focus-ring); outline-offset: 2px; }
+.status {
+  font-family: 'Space Mono', monospace; font-size: .8rem; letter-spacing: .18em;
+  color: var(--text-dim); min-height: 1.5em; text-align: center;
+}
+.status.pending { color: var(--gold-pale); }
+.status.success { color: var(--mpesa-light); }
+.status.error { color: var(--rose); }
 
 /* ===== FOOTER ===== */
 footer {
-  margin-top: 48px; padding-top: 28px; text-align: center;
+  margin-top: 48px; padding-top: 26px; text-align: center;
   border-top: 1px solid var(--glass-border);
 }
 footer .foot { font-family: 'Space Mono', monospace; font-size: .66rem; letter-spacing: .26em; color: var(--text-dim); opacity: .6; }
@@ -225,9 +263,9 @@ footer .foot { font-family: 'Space Mono', monospace; font-size: .66rem; letter-s
 @media (max-width: 640px) {
   .hero { padding: 100px 22px 60px; }
   .hero-eyebrow { font-size: 9px; letter-spacing: .18em; }
-  .actions-bar, .coffee-bar, .modal .bmc-grid { gap: 10px; }
-  .btn, .bmc-btn { padding: 11px 22px; font-size: .72rem; }
-  .modal { padding: 30px; }
+  .actions-bar, .support-bar { gap: 12px; }
+  .btn, .mpesa-btn { padding: 11px 22px; font-size: .72rem; }
+  .modal { padding: 32px 22px; }
 }
 </style>
 </head>
@@ -246,74 +284,184 @@ footer .foot { font-family: 'Space Mono', monospace; font-size: .66rem; letter-s
       <a href="The Alchemical Medium.html" class="btn btn-read" target="_blank" rel="noopener">Read the Ebook</a>
       <a href="the-alchemical-medium-3.pdf" class="btn btn-pdf" download>Download PDF</a>
       <a href="the-alchemical-medium.epub" class="btn btn-epub" download>Download EPUB</a>
-      <button type="button" class="btn btn-synopsis" id="openModal">Synopsis</button>
+      <button type="button" class="btn btn-synopsis" id="openSynopsis">Synopsis</button>
     </div>
 
-    <div class="coffee-bar">
-      <a href="https://www.buymeacoffee.com/josephgikara?amount=100" class="bmc-btn" target="_blank" rel="noopener">KSh&nbsp;100</a>
-      <a href="https://www.buymeacoffee.com/josephgikara?amount=250" class="bmc-btn" target="_blank" rel="noopener">KSh&nbsp;250</a>
-      <a href="https://www.buymeacoffee.com/josephgikara?amount=500" class="bmc-btn" target="_blank" rel="noopener">KSh&nbsp;500</a>
-      <a href="https://www.buymeacoffee.com/josephgikara?amount=1000" class="bmc-btn" target="_blank" rel="noopener">KSh&nbsp;1000</a>
+    <div class="support-label">Support the Signal</div>
+    <div class="support-bar">
+      <button type="button" class="mpesa-btn" data-amount="100">KSh&nbsp;100</button>
+      <button type="button" class="mpesa-btn" data-amount="250">KSh&nbsp;250</button>
+      <button type="button" class="mpesa-btn" data-amount="500">KSh&nbsp;500</button>
+      <button type="button" class="mpesa-btn" data-amount="1000">KSh&nbsp;1000</button>
     </div>
   </div>
 
   <footer>
-    <div class="foot">Buymeacoffee.com/josephgikara &nbsp;·&nbsp; The Vibe Has Become Flesh</div>
+    <div class="foot">Send via M-Pesa · The Vibe Has Become Flesh</div>
   </footer>
 </section>
 
-<!-- ===== MODAL ===== -->
-<div class="modal-backdrop" id="synopsisModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+<!-- ===== SYNOPSIS MODAL ===== -->
+<div class="modal-backdrop" id="synopsisModal" role="dialog" aria-modal="true" aria-labelledby="synopsisTitle">
   <div class="modal">
-    <button type="button" class="modal-close" aria-label="Close" id="closeModal">✕</button>
-    <h3 id="modalTitle">Synopsis</h3>
+    <button type="button" class="modal-close" id="closeSynopsis" aria-label="Close">✕</button>
+    <h3 id="synopsisTitle">Synopsis</h3>
     <p>For millennia the highest thinkers pursued the impossible dream of shaping reality through pure intent. Ancient alchemists spoke of transmuting base matter through sacred incantations and geometries. In our age that dream has migrated: the mystical ether is now the digital medium, and the programmer, freed from low-level ritual by Vibe Coding, returns to the status of alchemical architect.</p>
-    <p>Between the Type—the builder of ordered systems—and the Antitype—the breaker of every boundary—beneath the gaze of the Apex Mind, the living Garden of Code grows.</p>
-    <div class="bmc-grid">
-      <a href="https://www.buymeacoffee.com/josephgikara?amount=100" class="bmc-btn" target="_blank" rel="noopener">KSh&nbsp;100</a>
-      <a href="https://www.buymeacoffee.com/josephgikara?amount=250" class="bmc-btn" target="_blank" rel="noopener">KSh&nbsp;250</a>
-      <a href="https://www.buymeacoffee.com/josephgikara?amount=500" class="bmc-btn" target="_blank" rel="noopener">KSh&nbsp;500</a>
-      <a href="https://www.buymeacoffee.com/josephgikara?amount=1000" class="bmc-btn" target="_blank" rel="noopener">KSh&nbsp;1000</a>
-    </div>
+    <p>Between <span class="highlight">the Type</span> — the builder of ordered systems — and <span class="highlight">the Antitype</span> — the breaker of every boundary — beneath the gaze of the Apex Mind, the living Garden of Code grows.</p>
   </div>
 </div>
 
-<script>
-(function(){
-  var sf = document.getElementById('starfield');
-  if (sf) {
-    for (var i = 0; i < 130; i++) {
-      var s = document.createElement('div');
-      s.className = 'star';
-      var sz = Math.random() * 2.2 + 0.5;
-      s.style.cssText =
-        'width:' + sz + 'px;height:' + sz + 'px;' +
-        'left:' + (Math.random() * 100) + '%;' +
-        'top:' + (Math.random() * 100) + '%;' +
-        '--d:' + (Math.random() * 3 + 2).toFixed(1) + 's;' +
-        'animation-delay:' + (Math.random() * 4).toFixed(1) + 's';
-      sf.appendChild(s);
-    }
-  }
+<!-- ===== M-PESA MODAL ===== -->
+<div class="modal-backdrop" id="mpesaModal" role="dialog" aria-modal="true" aria-labelledby="mpesaTitle" aria-hidden="true">
+  <div class="modal">
+    <button type="button" class="modal-close" id="closeMpesa" aria-label="Close">✕</button>
+    <h3 id="mpesaTitle">M-Pesa Payment</h3>
+    <p>Send <span class="highlight" id="mpesaAmount">KSh 100</span> via M-Pesa STK push.</p>
+    <form id="mpesaForm" class="mpesa-form" autocomplete="off" novalidate>
+      <label for="mpesaPhone">M-Pesa Number</label>
+      <input type="tel" id="mpesaPhone" name="phone" inputmode="numeric"
+             placeholder="e.g. 0701234567 or 254701234567" required>
+      <button type="submit" class="mpesa-send" id="mpesaSend">Send</button>
+    </form>
+    <div id="mpesaStatus" class="status"></div>
+  </div>
+</div>
 
-  var modal = document.getElementById('synopsisModal');
-  var openBtn = document.getElementById('openModal');
-  var closeBtn = document.getElementById('closeModal');
+<script type="module">
+  /* ===== Firebase config — replace with your project credentials ===== */
+  const firebaseConfig = {
+  apiKey: "AIzaSyBlQnLAyxY3DTfZIlhISS1sjn8KSkh48Ic",
+  authDomain: "bitjosef-3ff14.firebaseapp.com",
+  projectId: "bitjosef-3ff14",
+  storageBucket: "bitjosef-3ff14.firebasestorage.app",
+  messagingSenderId: "1065442585947",
+  appId: "1:1065442585947:web:e962c1860e11564440fe7e",
+};
 
-  function toggle(open) {
-    modal.classList.toggle('open', open);
-    document.body.style.overflow = open ? 'hidden' : '';
-  }
+  import("https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js").then(m1 => {
+    import("https://www.gstatic.com/firebasejs/10.13.0/firebase-functions.js").then(m2 => {
+      const app = m1.initializeApp(firebaseConfig);
+      const functions = m2.getFunctions(app, "us-central1");
 
-  openBtn.addEventListener('click', function(){ toggle(true); });
-  closeBtn.addEventListener('click', function(){ toggle(false); });
-  modal.addEventListener('click', function(e){
-    if (e.target === modal) toggle(false);
+      const mpesaModal = document.getElementById('mpesaModal');
+      const synopsisModal = document.getElementById('synopsisModal');
+      const mpesaAmount = document.getElementById('mpesaAmount');
+      const mpesaPhone = document.getElementById('mpesaPhone');
+      const mpesaForm = document.getElementById('mpesaForm');
+      const mpesaSend = document.getElementById('mpesaSend');
+      const mpesaStatus = document.getElementById('mpesaStatus');
+
+      let selectedAmount = 100;
+
+      function showStatus(msg, kind) {
+        mpesaStatus.textContent = msg;
+        mpesaStatus.className = 'status ' + (kind || '');
+      }
+
+      function openMpesa(amount) {
+        selectedAmount = amount;
+        mpesaAmount.textContent = 'KSh ' + amount;
+        mpesaPhone.value = '';
+        mpesaPhone.focus();
+        mpesaStatus.textContent = '';
+        mpesaStatus.className = 'status';
+        mpesaModal.classList.add('open');
+        mpesaModal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeMpesa() {
+        mpesaModal.classList.remove('open');
+        mpesaModal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      }
+
+      function toggleSyn(syn, open) {
+        syn.classList.toggle('open', open);
+        document.body.style.overflow = open ? 'hidden' : '';
+      }
+
+      function normalizePhone(raw) {
+        let p = (raw || '').replace(/\D/g, '');
+        if (!p) return '';
+        if (p.startsWith('00')) p = p.slice(2);
+        if (p.startsWith('0')) p = '254' + p.slice(1);
+        if (!p.startsWith('254')) p = '254' + p;
+        return p;
+      }
+
+      // Starfield
+      (function(){
+        var sf = document.getElementById('starfield');
+        if (!sf) return;
+        for (var i = 0; i < 130; i++) {
+          var s = document.createElement('div');
+          s.className = 'star';
+          var sz = Math.random() * 2.2 + 0.5;
+          s.style.cssText =
+            'width:' + sz + 'px;height:' + sz + 'px;' +
+            'left:' + (Math.random() * 100) + '%;' +
+            'top:' + (Math.random() * 100) + '%;' +
+            '--d:' + (Math.random() * 3 + 2).toFixed(1) + 's;' +
+            'animation-delay:' + (Math.random() * 4).toFixed(1) + 's';
+          sf.appendChild(s);
+        }
+      })();
+
+      // Amount buttons -> M-Pesa modal
+      document.querySelectorAll('.mpesa-btn').forEach(function(btn){
+        btn.addEventListener('click', function(){ openMpesa(parseInt(this.getAttribute('data-amount'), 10)); });
+      });
+
+      // Synopsis modal
+      var openSynBtn = document.getElementById('openSynopsis');
+      var closeSynBtn = document.getElementById('closeSynopsis');
+      if (openSynBtn) openSynBtn.addEventListener('click', function(){ toggleSyn(synopsisModal, true); });
+      if (closeSynBtn) closeSynBtn.addEventListener('click', function(){ toggleSyn(synopsisModal, false); });
+      if (synopsisModal) {
+        synopsisModal.addEventListener('click', function(e){ if (e.target === synopsisModal) toggleSyn(synopsisModal, false); });
+      }
+
+      // Close M-Pesa modal
+      var closeMpesaBtn = document.getElementById('closeMpesa');
+      if (closeMpesaBtn) closeMpesaBtn.addEventListener('click', closeMpesa);
+      if (mpesaModal) {
+        mpesaModal.addEventListener('click', function(e){ if (e.target === mpesaModal) closeMpesa(); });
+      }
+      document.addEventListener('keydown', function(e){
+        if (e.key === 'Escape') {
+          if (mpesaModal && mpesaModal.classList.contains('open')) closeMpesa();
+          if (synopsisModal && synopsisModal.classList.contains('open')) toggleSyn(synopsisModal, false);
+        }
+      });
+
+      // Submit -> callable STK push
+      mpesaForm.addEventListener('submit', function(e){
+        e.preventDefault();
+        var phone = normalizePhone(mpesaPhone.value);
+        if (!phone || phone.length !== 12) {
+          showStatus('Please enter a valid M-Pesa number (e.g. 0701234567).', 'error');
+          return;
+        }
+        showStatus('Requesting STK push… please wait', 'pending');
+        mpesaSend.disabled = true;
+
+        var initiateStkPush = m2.httpsCallable(functions, 'initiateStkPush');
+        initiateStkPush({ amount: selectedAmount, phone: phone }).then(function(result) {
+          mpesaSend.disabled = false;
+          if (result.data && result.data.success) {
+            showStatus('STK push sent. Check your phone and complete the payment. 🙏', 'success');
+          } else {
+            showStatus('Payment request could not be sent. Please try again.', 'error');
+          }
+        }).catch(function(err){
+          mpesaSend.disabled = false;
+          var msg = (err && err.message) ? err.message : 'Something went wrong. Please try again.';
+          showStatus(msg, 'error');
+        });
+      });
+    });
   });
-  document.addEventListener('keydown', function(e){
-    if (e.key === 'Escape' && modal.classList.contains('open')) toggle(false);
-  });
-})();
 </script>
 </body>
 </html>
