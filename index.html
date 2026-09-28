@@ -328,140 +328,132 @@ footer .foot { font-family: 'Space Mono', monospace; font-size: .66rem; letter-s
 </div>
 
 <script type="module">
-  /* ===== Firebase config — replace with your project credentials ===== */
-  const firebaseConfig = {
-  apiKey: "AIzaSyBlQnLAyxY3DTfZIlhISS1sjn8KSkh48Ic",
-  authDomain: "bitjosef-3ff14.firebaseapp.com",
-  projectId: "bitjosef-3ff14",
-  storageBucket: "bitjosef-3ff14.firebasestorage.app",
-  messagingSenderId: "1065442585947",
-  appId: "1:1065442585947:web:e962c1860e11564440fe7e",
-};
+  /* ===== Firebase Functions endpoint ===== */
+  const FUNCTIONS_URL = "https://us-central1-bitjosef-3ff14.cloudfunctions.net";
 
-  import("https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js").then(m1 => {
-    import("https://www.gstatic.com/firebasejs/10.13.0/firebase-functions.js").then(m2 => {
-      const app = m1.initializeApp(firebaseConfig);
-      const functions = m2.getFunctions(app, "us-central1");
+  const mpesaModal = document.getElementById('mpesaModal');
+  const synopsisModal = document.getElementById('synopsisModal');
+  const mpesaAmount = document.getElementById('mpesaAmount');
+  const mpesaPhone = document.getElementById('mpesaPhone');
+  const mpesaForm = document.getElementById('mpesaForm');
+  const mpesaSend = document.getElementById('mpesaSend');
+  const mpesaStatus = document.getElementById('mpesaStatus');
 
-      const mpesaModal = document.getElementById('mpesaModal');
-      const synopsisModal = document.getElementById('synopsisModal');
-      const mpesaAmount = document.getElementById('mpesaAmount');
-      const mpesaPhone = document.getElementById('mpesaPhone');
-      const mpesaForm = document.getElementById('mpesaForm');
-      const mpesaSend = document.getElementById('mpesaSend');
-      const mpesaStatus = document.getElementById('mpesaStatus');
+  let selectedAmount = 100;
 
-      let selectedAmount = 100;
+  function showStatus(msg, kind) {
+    mpesaStatus.textContent = msg;
+    mpesaStatus.className = 'status ' + (kind || '');
+  }
 
-      function showStatus(msg, kind) {
-        mpesaStatus.textContent = msg;
-        mpesaStatus.className = 'status ' + (kind || '');
+  function openMpesa(amount) {
+    selectedAmount = amount;
+    mpesaAmount.textContent = 'KSh ' + amount;
+    mpesaPhone.value = '';
+    mpesaPhone.focus();
+    mpesaStatus.textContent = '';
+    mpesaStatus.className = 'status';
+    mpesaModal.classList.add('open');
+    mpesaModal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeMpesa() {
+    mpesaModal.classList.remove('open');
+    mpesaModal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  function toggleSyn(syn, open) {
+    syn.classList.toggle('open', open);
+    document.body.style.overflow = open ? 'hidden' : '';
+  }
+
+  function normalizePhone(raw) {
+    let p = (raw || '').replace(/\D/g, '');
+    if (!p) return '';
+    if (p.startsWith('00')) p = p.slice(2);
+    if (p.startsWith('0')) p = '254' + p.slice(1);
+    if (!p.startsWith('254')) p = '254' + p;
+    return p;
+  }
+
+  // Starfield
+  (function(){
+    var sf = document.getElementById('starfield');
+    if (!sf) return;
+    for (var i = 0; i < 130; i++) {
+      var s = document.createElement('div');
+      s.className = 'star';
+      var sz = Math.random() * 2.2 + 0.5;
+      s.style.cssText =
+        'width:' + sz + 'px;height:' + sz + 'px;' +
+        'left:' + (Math.random() * 100) + '%;' +
+        'top:' + (Math.random() * 100) + '%;' +
+        '--d:' + (Math.random() * 3 + 2).toFixed(1) + 's;' +
+        'animation-delay:' + (Math.random() * 4).toFixed(1) + 's';
+      sf.appendChild(s);
+    }
+  })();
+
+  // Amount buttons -> M-Pesa modal
+  document.querySelectorAll('.mpesa-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){ openMpesa(parseInt(this.getAttribute('data-amount'), 10)); });
+  });
+
+  // Synopsis modal
+  var openSynBtn = document.getElementById('openSynopsis');
+  var closeSynBtn = document.getElementById('closeSynopsis');
+  if (openSynBtn) openSynBtn.addEventListener('click', function(){ toggleSyn(synopsisModal, true); });
+  if (closeSynBtn) closeSynBtn.addEventListener('click', function(){ toggleSyn(synopsisModal, false); });
+  if (synopsisModal) {
+    synopsisModal.addEventListener('click', function(e){ if (e.target === synopsisModal) toggleSyn(synopsisModal, false); });
+  }
+
+  // Close M-Pesa modal
+  var closeMpesaBtn = document.getElementById('closeMpesa');
+  if (closeMpesaBtn) closeMpesaBtn.addEventListener('click', closeMpesa);
+  if (mpesaModal) {
+    mpesaModal.addEventListener('click', function(e){ if (e.target === mpesaModal) closeMpesa(); });
+  }
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') {
+      if (mpesaModal && mpesaModal.classList.contains('open')) closeMpesa();
+      if (synopsisModal && synopsisModal.classList.contains('open')) toggleSyn(synopsisModal, false);
+    }
+  });
+
+  // Submit -> STK push via fetch
+  mpesaForm.addEventListener('submit', function(e){
+    e.preventDefault();
+    var phone = normalizePhone(mpesaPhone.value);
+    if (!phone || phone.length !== 12) {
+      showStatus('Please enter a valid M-Pesa number (e.g. 0701234567).', 'error');
+      return;
+    }
+    showStatus('Requesting STK push… please wait', 'pending');
+    mpesaSend.disabled = true;
+
+    fetch(FUNCTIONS_URL + '/initiateStkPush', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ amount: selectedAmount, phone: phone })
+    }).then(function(res) {
+      return res.json();
+    }).then(function(data) {
+      mpesaSend.disabled = false;
+      if (data.success) {
+        showStatus('STK push sent. Check your phone and complete the payment. 🙏', 'success');
+      } else {
+        showStatus(data.error || 'Payment request could not be sent. Please try again.', 'error');
       }
-
-      function openMpesa(amount) {
-        selectedAmount = amount;
-        mpesaAmount.textContent = 'KSh ' + amount;
-        mpesaPhone.value = '';
-        mpesaPhone.focus();
-        mpesaStatus.textContent = '';
-        mpesaStatus.className = 'status';
-        mpesaModal.classList.add('open');
-        mpesaModal.setAttribute('aria-hidden', 'false');
-        document.body.style.overflow = 'hidden';
-      }
-
-      function closeMpesa() {
-        mpesaModal.classList.remove('open');
-        mpesaModal.setAttribute('aria-hidden', 'true');
-        document.body.style.overflow = '';
-      }
-
-      function toggleSyn(syn, open) {
-        syn.classList.toggle('open', open);
-        document.body.style.overflow = open ? 'hidden' : '';
-      }
-
-      function normalizePhone(raw) {
-        let p = (raw || '').replace(/\D/g, '');
-        if (!p) return '';
-        if (p.startsWith('00')) p = p.slice(2);
-        if (p.startsWith('0')) p = '254' + p.slice(1);
-        if (!p.startsWith('254')) p = '254' + p;
-        return p;
-      }
-
-      // Starfield
-      (function(){
-        var sf = document.getElementById('starfield');
-        if (!sf) return;
-        for (var i = 0; i < 130; i++) {
-          var s = document.createElement('div');
-          s.className = 'star';
-          var sz = Math.random() * 2.2 + 0.5;
-          s.style.cssText =
-            'width:' + sz + 'px;height:' + sz + 'px;' +
-            'left:' + (Math.random() * 100) + '%;' +
-            'top:' + (Math.random() * 100) + '%;' +
-            '--d:' + (Math.random() * 3 + 2).toFixed(1) + 's;' +
-            'animation-delay:' + (Math.random() * 4).toFixed(1) + 's';
-          sf.appendChild(s);
-        }
-      })();
-
-      // Amount buttons -> M-Pesa modal
-      document.querySelectorAll('.mpesa-btn').forEach(function(btn){
-        btn.addEventListener('click', function(){ openMpesa(parseInt(this.getAttribute('data-amount'), 10)); });
-      });
-
-      // Synopsis modal
-      var openSynBtn = document.getElementById('openSynopsis');
-      var closeSynBtn = document.getElementById('closeSynopsis');
-      if (openSynBtn) openSynBtn.addEventListener('click', function(){ toggleSyn(synopsisModal, true); });
-      if (closeSynBtn) closeSynBtn.addEventListener('click', function(){ toggleSyn(synopsisModal, false); });
-      if (synopsisModal) {
-        synopsisModal.addEventListener('click', function(e){ if (e.target === synopsisModal) toggleSyn(synopsisModal, false); });
-      }
-
-      // Close M-Pesa modal
-      var closeMpesaBtn = document.getElementById('closeMpesa');
-      if (closeMpesaBtn) closeMpesaBtn.addEventListener('click', closeMpesa);
-      if (mpesaModal) {
-        mpesaModal.addEventListener('click', function(e){ if (e.target === mpesaModal) closeMpesa(); });
-      }
-      document.addEventListener('keydown', function(e){
-        if (e.key === 'Escape') {
-          if (mpesaModal && mpesaModal.classList.contains('open')) closeMpesa();
-          if (synopsisModal && synopsisModal.classList.contains('open')) toggleSyn(synopsisModal, false);
-        }
-      });
-
-      // Submit -> callable STK push
-      mpesaForm.addEventListener('submit', function(e){
-        e.preventDefault();
-        var phone = normalizePhone(mpesaPhone.value);
-        if (!phone || phone.length !== 12) {
-          showStatus('Please enter a valid M-Pesa number (e.g. 0701234567).', 'error');
-          return;
-        }
-        showStatus('Requesting STK push… please wait', 'pending');
-        mpesaSend.disabled = true;
-
-        var initiateStkPush = m2.httpsCallable(functions, 'initiateStkPush');
-        initiateStkPush({ amount: selectedAmount, phone: phone }).then(function(result) {
-          mpesaSend.disabled = false;
-          if (result.data && result.data.success) {
-            showStatus('STK push sent. Check your phone and complete the payment. 🙏', 'success');
-          } else {
-            showStatus('Payment request could not be sent. Please try again.', 'error');
-          }
-        }).catch(function(err){
-          mpesaSend.disabled = false;
-          var msg = (err && err.message) ? err.message : 'Something went wrong. Please try again.';
-          showStatus(msg, 'error');
-        });
-      });
+    }).catch(function(err){
+      mpesaSend.disabled = false;
+      var msg = (err && err.message) ? err.message : 'Something went wrong. Please try again.';
+      showStatus(msg, 'error');
     });
   });
+</script>
 </script>
 </body>
 </html>
